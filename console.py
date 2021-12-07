@@ -66,24 +66,24 @@ def inserir_lancamento():
 
 
 def exclir_lancamento():
-    linhacliente = frm_lancamentos.tableWidget.currentRow()
-    frm_lancamentos.tableWidget.removeRow(linhacliente)
+    linhalanc = frm_lancamentos.tableWidget.currentRow()
+    frm_lancamentos.tableWidget.removeRow(linhalanc)
 
     cursor = banco.cursor()
     cursor.execute("SELECT idcliente FROM tblcliente")
     dados_lidos = cursor.fetchall()
-    valor_id = dados_lidos[linhacliente][0]
-    cursor.execute("DELETE FROM tblcliente WHERE idcliente="+str(valor_id))
+    valor_id = dados_lidos[linhalanc][0]
+    cursor.execute("DELETE FROM tbllancamento WHERE idlanc="+str(valor_id))
 def salvar_lancamento():
     global numero_id
     
     #comando mysql para inserir dados no banco
     cursor = banco.cursor()
-    comando_SQL_id = "SELECT id FROM tblproduto"
+    comando_SQL_id = "SELECT id FROM tbllancamento"
     cursor.execute(comando_SQL_id)
     numero_id = cursor.fetchall()
 
-    if not idproduto == numero_id:
+    if not idlanc == numero_id:
         cursor = banco.cursor()
         comando_SQL = "INSERT INTO tblproduto (codico, descricao, grupo, fabricante, unidade, pcound, pcovenda, markup) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         dados = (str(linhaCod), str(linhaDesc), str(linhaGrupo), str(linhaFab), str(linhaUnd), str(linhaPrecocomp), str(linhaprecovenda), str(linhamarkup))
@@ -95,25 +95,25 @@ def salvar_lancamento():
         banco.commit()
 def editar_lancamento():
     global numero_id
-    linha = frm_pesquisa_produto.tableWidget.currentRow()
+    linha = frm_principal.tableWidget.currentRow()
 
     cursor = banco.cursor()
-    comando_SQL = "SELECT * FROM tblproduto"
+    comando_SQL = "SELECT * FROM tbllancamento"
     cursor.execute(comando_SQL)
     dados_lidos = cursor.fetchall()
     valor_id = dados_lidos[linha][0]
-    cursor.execute("SELECT * FROM tblproduto WHERE id="+str(valor_id))
+    cursor.execute("SELECT * FROM tbllancamento WHERE idlanc="+str(valor_id))
     produto = cursor.fetchall()
-    frm_produto.show()
+    frm_lancamentos.show()
 
-    frm_produto.line_ean.setText(str(produto[0][0])) #campo codico
-    frm_produto.line_descricao.setText(str(produto[0][1])) #campo descrição 
-    frm_produto.line_grupo.setText(str(produto[0][2])) #campo grupo
-    frm_produto.line_fabric.setText(str(produto[0][3])) #campo fabricante 
-    frm_produto.line_tipo_und.setText(str(produto[0][4])) #campo undade
-    frm_produto.precounid.setText(str(produto[0][5])) #campo preço por unidade
-    frm_produto.precovenda.setText(str(produto[0][6])) #campo preço de venda
-    frm_produto.markup.textsetText(str(produto[0][7])) #campo margem de lucro
+    frm_lancamentos.line_ean.setText(str(produto[0][0])) #campo codico
+    frm_lancamentos.line_descricao.setText(str(produto[0][1])) #campo descrição 
+    frm_lancamentos.line_grupo.setText(str(produto[0][2])) #campo grupo
+    frm_lancamentos.line_fabric.setText(str(produto[0][3])) #campo fabricante 
+    frm_lancamentos.line_tipo_und.setText(str(produto[0][4])) #campo undade
+    frm_lancamentos.precounid.setText(str(produto[0][5])) #campo preço por unidade
+    frm_lancamentos.precovenda.setText(str(produto[0][6])) #campo preço de venda
+    frm_lancamentos.markup.textsetText(str(produto[0][7])) #campo margem de lucro
     
     numero_id = valor_id
 def excluir_lancamento_total():
