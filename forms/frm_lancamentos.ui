@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>frm_lancamentos</class>
+ <widget class="QMainWindow" name="frm_lancamentos">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Lançamentos</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLineEdit" name="edt_doc">
@@ -162,7 +162,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="tbn_excluir">
+   <widget class="QPushButton" name="btn_excluir">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -175,7 +175,7 @@
      <string>Excluir</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="tbn_salvar">
+   <widget class="QPushButton" name="btn_salvar">
     <property name="geometry">
      <rect>
       <x>630</x>
@@ -218,6 +218,42 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="dateEdit">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>10</y>
+      <width>110</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="dateTime">
+     <datetime>
+      <hour>0</hour>
+      <minute>0</minute>
+      <second>0</second>
+      <year>2021</year>
+      <month>12</month>
+      <day>7</day>
+     </datetime>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::MonthSection</enum>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
+    <property name="timeSpec">
+     <enum>Qt::LocalTime</enum>
+    </property>
+    <property name="date">
+     <date>
+      <year>2021</year>
+      <month>12</month>
+      <day>7</day>
+     </date>
     </property>
    </widget>
   </widget>

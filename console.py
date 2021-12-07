@@ -1,5 +1,6 @@
+from typing import Text
 from PyQt5 import uic, QtWidgets, QtGui
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QTableWidgetItem
 import mysql.connector
 import mysql.connector.errors
 
@@ -9,7 +10,7 @@ banco = mysql.connector.connect(
     host="localhost",
     user="root",
     passwd="cofggcvf",
-    database="dbstore")
+    database="dbcashier")
 def funcao_login():
     #frm_login.lineuser.setText("")
     nome_user =frm_login.lineuser.text()
@@ -46,24 +47,79 @@ def funcao_cancela():
 def inserir_lancamento():
     rowPosition = frm_lancamentos.tableWidget.rowCount()
     frm_lancamentos.tableWidget.insertRow(rowPosition)
-    idprod = frm_lancamentos.line_idprod.text()
-    line_descprod = frm_lancamentos.line_descprod.text()
-    quant = frm_lancamentos.edt_quant.text()
-    valorund = frm_lancamentos.edt_valorund.text()
-    porsdesc = frm_lancamentos.edt_porsdesc.text()
-    valordesc = frm_lancamentos.edt_valordesc.text()
+    edt_doc = frm_lancamentos.edt_doc.text()
+    data = frm_lancamentos.dateEdit.text()
+    edt_desc1 = frm_lancamentos.edt_desc1.text()
+    edt_desc2 = frm_lancamentos.edt_desc2.text()
+    box_tipo = frm_lancamentos.box_tipo
+    edt_valor = frm_lancamentos.edt_valor.text()
     numcols = frm_lancamentos.tableWidget.columnCount()
     numrows = frm_lancamentos.tableWidget.rowCount()
     frm_lancamentos.tableWidget.setRowCount(numrows)
     frm_lancamentos.tableWidget.setColumnCount(numcols)
-    frm_lancamentos.tableWidget.setItem(numrows -1,0,QtGui.QTableWidgetItem(idprod))
-    frm_lancamentos.tableWidget.setItem(numrows -1,1,QtGui.QTableWidgetItem(line_descprod))
-    frm_lancamentos.tableWidget.setItem(numrows -1,2,QtGui.QTableWidgetItem(quant))
-    frm_lancamentos.tableWidget.setItem(numrows -1,3,QtGui.QTableWidgetItem(valorund))
-    frm_lancamentos.tableWidget.setItem(numrows -1,4,QtGui.QTableWidgetItem(porsdesc))
-    frm_lancamentos.tableWidget.setItem(numrows -1,5,QtGui.QTableWidgetItem(valordesc))
+    frm_lancamentos.tableWidget.setItem(numrows -1,0,QTableWidgetItem(edt_doc))
+    frm_lancamentos.tableWidget.setItem(numrows -1,1,QTableWidgetItem(data))
+    frm_lancamentos.tableWidget.setItem(numrows -1,2,QTableWidgetItem(edt_desc1))
+    frm_lancamentos.tableWidget.setItem(numrows -1,3,QTableWidgetItem(edt_desc2))
+    frm_lancamentos.tableWidget.setItem(numrows -1,4,QTableWidgetItem(str(box_tipo)))
+    frm_lancamentos.tableWidget.setItem(numrows -1,5,QTableWidgetItem(edt_valor))
 
 
+def exclir_lancamento():
+    linhacliente = frm_lancamentos.tableWidget.currentRow()
+    frm_lancamentos.tableWidget.removeRow(linhacliente)
+
+    cursor = banco.cursor()
+    cursor.execute("SELECT idcliente FROM tblcliente")
+    dados_lidos = cursor.fetchall()
+    valor_id = dados_lidos[linhacliente][0]
+    cursor.execute("DELETE FROM tblcliente WHERE idcliente="+str(valor_id))
+def salvar_lancamento():
+    global numero_id
+    
+    #comando mysql para inserir dados no banco
+    cursor = banco.cursor()
+    comando_SQL_id = "SELECT id FROM tblproduto"
+    cursor.execute(comando_SQL_id)
+    numero_id = cursor.fetchall()
+
+    if not idproduto == numero_id:
+        cursor = banco.cursor()
+        comando_SQL = "INSERT INTO tblproduto (codico, descricao, grupo, fabricante, unidade, pcound, pcovenda, markup) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        dados = (str(linhaCod), str(linhaDesc), str(linhaGrupo), str(linhaFab), str(linhaUnd), str(linhaPrecocomp), str(linhaprecovenda), str(linhamarkup))
+        cursor.execute(comando_SQL,dados)
+        banco.commit()
+    else:
+        cursor = banco.cursor()
+        cursor.execute ("UPDATE tblproduto SET codico ='{}', descricao ='{}', grupo ='{}', fabricante ='{}', unidade ='{}',pcound ='{}', pcovenda ='{}', markup ='{}' WHERE id {}".format(linhaCod, linhaDesc, linhaGrupo, linhaFab, linhaUnd, linhaPrecocomp, linhaprecovenda, linhamarkup, numero_id))
+        banco.commit()
+def editar_lancamento():
+    global numero_id
+    linha = frm_pesquisa_produto.tableWidget.currentRow()
+
+    cursor = banco.cursor()
+    comando_SQL = "SELECT * FROM tblproduto"
+    cursor.execute(comando_SQL)
+    dados_lidos = cursor.fetchall()
+    valor_id = dados_lidos[linha][0]
+    cursor.execute("SELECT * FROM tblproduto WHERE id="+str(valor_id))
+    produto = cursor.fetchall()
+    frm_produto.show()
+
+    frm_produto.line_ean.setText(str(produto[0][0])) #campo codico
+    frm_produto.line_descricao.setText(str(produto[0][1])) #campo descrição 
+    frm_produto.line_grupo.setText(str(produto[0][2])) #campo grupo
+    frm_produto.line_fabric.setText(str(produto[0][3])) #campo fabricante 
+    frm_produto.line_tipo_und.setText(str(produto[0][4])) #campo undade
+    frm_produto.precounid.setText(str(produto[0][5])) #campo preço por unidade
+    frm_produto.precovenda.setText(str(produto[0][6])) #campo preço de venda
+    frm_produto.markup.textsetText(str(produto[0][7])) #campo margem de lucro
+    
+    numero_id = valor_id
+def excluir_lancamento_total():
+    pass  
+def chama_lancamento():
+    frm_lancamentos.show()
 if __name__ == "__main__":
     # chamando as telas
     app = QtWidgets.QApplication([])
@@ -76,7 +132,15 @@ if __name__ == "__main__":
     frm_login.linekey.setEchoMode(QtWidgets.QLineEdit.Password)
     frm_login.btnlogin.clicked.connect(funcao_login)
     frm_login.btnexit.clicked.connect(funcao_cancela)
+    # botões da tela principal
+    frm_principal.btn_editar.clicked.connect(editar_lancamento)
+    frm_principal.btn_excluir.clicked.connect(excluir_lancamento_total)
+    frm_principal.btn_lancar.clicked.connect(chama_lancamento)
+    # botões da tela lançamentos
+    frm_lancamentos.btn_inserir.clicked.connect(inserir_lancamento)
+    frm_lancamentos.btn_excluir.clicked.connect(exclir_lancamento)
+    frm_lancamentos.btn_salvar.clicked.connect(salvar_lancamento)
     
-
+    
     frm_login.show()
     app.exec()
