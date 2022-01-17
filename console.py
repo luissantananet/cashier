@@ -53,6 +53,8 @@ def inserir_lancamento():
     edt_desc2 = frm_lancamentos.edt_desc2.text()
     box_tipo = frm_lancamentos.box_tipo
     edt_valor = frm_lancamentos.edt_valor.text()
+
+def inerir_lanc_tablewidget():
     numcols = frm_lancamentos.tableWidget.columnCount()
     numrows = frm_lancamentos.tableWidget.rowCount()
     frm_lancamentos.tableWidget.setRowCount(numrows)
