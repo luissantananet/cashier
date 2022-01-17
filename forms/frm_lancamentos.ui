@@ -256,6 +256,26 @@
      </date>
     </property>
    </widget>
+   <widget class="QComboBox" name="comboBox">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>10</y>
+      <width>191</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>São Paulo-SP</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Gravataí-RS</string>
+     </property>
+    </item>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -263,7 +283,7 @@
      <x>0</x>
      <y>0</y>
      <width>740</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
