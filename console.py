@@ -44,7 +44,33 @@ def cadastrousuario():
     frm_caduser.lineKey.setText('')
 def funcao_cancela():
     frm_login.close()
-def inserir_lancamento():
+def inserir_lanc_item():
+    global numero_id
+    id = frm_lancamentos.edt_ID.text()
+    edt_doc = frm_lancamentos.edt_doc.text()
+    data = frm_lancamentos.dateEdit.text()
+    edt_desc1 = frm_lancamentos.edt_desc1.text()
+    edt_desc2 = frm_lancamentos.edt_desc2.text()
+    box_tipo = frm_lancamentos.box_tipo
+    edt_valor = frm_lancamentos.edt_valor.text()
+    descri = str(edt_desc1+" "+ edt_desc2)
+    #comando mysql para inserir dados no banco
+    cursor = banco.cursor()
+    comando_SQL_id = "SELECT iditem FROM tbllancitem"
+    cursor.execute(comando_SQL_id)
+    numero_id = cursor.fetchall()
+
+    if not id == numero_id:
+        cursor = banco.cursor()
+        comando_SQL = "INSERT INTO tbllancitem (doc,datah,descricao,tipo,valor) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        dados = (str(edt_doc), str(data), str(descri), str(box_tipo), str(edt_valor))
+        cursor.execute(comando_SQL,dados)
+        banco.commit()
+    else:
+        cursor = banco.cursor()
+        cursor.execute ("UPDATE tblproduto SET doc ='{}', datah ='{}', descricao ='{}', tipo ='{}', valor ='{}' WHERE id {}".format(edt_doc, data, descri, box_tipo, edt_valor, numero_id))
+        banco.commit()
+
     rowPosition = frm_lancamentos.tableWidget.rowCount()
     frm_lancamentos.tableWidget.insertRow(rowPosition)
     edt_doc = frm_lancamentos.edt_doc.text()
@@ -53,8 +79,6 @@ def inserir_lancamento():
     edt_desc2 = frm_lancamentos.edt_desc2.text()
     box_tipo = frm_lancamentos.box_tipo
     edt_valor = frm_lancamentos.edt_valor.text()
-
-def inerir_lanc_tablewidget():
     numcols = frm_lancamentos.tableWidget.columnCount()
     numrows = frm_lancamentos.tableWidget.rowCount()
     frm_lancamentos.tableWidget.setRowCount(numrows)
@@ -65,6 +89,9 @@ def inerir_lanc_tablewidget():
     frm_lancamentos.tableWidget.setItem(numrows -1,3,QTableWidgetItem(edt_desc2))
     frm_lancamentos.tableWidget.setItem(numrows -1,4,QTableWidgetItem(str(box_tipo)))
     frm_lancamentos.tableWidget.setItem(numrows -1,5,QTableWidgetItem(edt_valor))
+
+def inerir_lanc_tablewidget():
+    pass
 
 
 def exclir_lancamento():
@@ -85,15 +112,15 @@ def salvar_lancamento():
     cursor.execute(comando_SQL_id)
     numero_id = cursor.fetchall()
 
-    if not idlanc == numero_id:
+    if not id == numero_id:
         cursor = banco.cursor()
-        comando_SQL = "INSERT INTO tblproduto (codico, descricao, grupo, fabricante, unidade, pcound, pcovenda, markup) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        dados = (str(linhaCod), str(linhaDesc), str(linhaGrupo), str(linhaFab), str(linhaUnd), str(linhaPrecocomp), str(linhaprecovenda), str(linhamarkup))
+        comando_SQL = "INSERT INTO tbllancitem (doc,datah,descricao,tipo,valor) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        dados = (str(edt_doc), str(data), str(descri), str(box_tipo), str(edt_valor))
         cursor.execute(comando_SQL,dados)
         banco.commit()
     else:
         cursor = banco.cursor()
-        cursor.execute ("UPDATE tblproduto SET codico ='{}', descricao ='{}', grupo ='{}', fabricante ='{}', unidade ='{}',pcound ='{}', pcovenda ='{}', markup ='{}' WHERE id {}".format(linhaCod, linhaDesc, linhaGrupo, linhaFab, linhaUnd, linhaPrecocomp, linhaprecovenda, linhamarkup, numero_id))
+        cursor.execute ("UPDATE tblproduto SET doc ='{}', datah ='{}', descricao ='{}', tipo ='{}', valor ='{}' WHERE id {}".format(edt_doc, data, descri, box_tipo, edt_valor, numero_id))
         banco.commit()
 def editar_lancamento():
     global numero_id
@@ -139,7 +166,7 @@ if __name__ == "__main__":
     frm_principal.btn_excluir.clicked.connect(excluir_lancamento_total)
     frm_principal.btn_lancar.clicked.connect(chama_lancamento)
     # botões da tela lançamentos
-    frm_lancamentos.btn_inserir.clicked.connect(inserir_lancamento)
+    frm_lancamentos.btn_inserir.clicked.connect(inserir_lanc_item)
     frm_lancamentos.btn_excluir.clicked.connect(exclir_lancamento)
     frm_lancamentos.btn_salvar.clicked.connect(salvar_lancamento)
     
